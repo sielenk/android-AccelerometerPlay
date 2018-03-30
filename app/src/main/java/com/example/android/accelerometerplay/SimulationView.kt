@@ -32,7 +32,6 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 
 class SimulationView(context: Context) : FrameLayout(context), SensorEventListener {
-
     companion object {
         val NUM_PARTICLES = 5
         val ballDiameter = 0.006f
@@ -69,11 +68,12 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
             sensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME)
 
 
-    fun stopSimulation() = sensorManager.unregisterListener(this)
+    fun stopSimulation() =
+            sensorManager.unregisterListener(this)
 
     init {
-
         val metrics = DisplayMetrics()
+
         mDisplay.getMetrics(metrics)
 
         mMetersToPixelsX = metrics.xdpi / 0.0254f
@@ -98,14 +98,18 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
             mBalls[i].setLayerType(View.LAYER_TYPE_HARDWARE, null)
             addView(mBalls[i], ViewGroup.LayoutParams(mDstWidth, mDstHeight))
         }
+
         mParticleSystem = ParticleSystem(mBalls)
 
         val opts = BitmapFactory.Options()
+
         opts.inPreferredConfig = Bitmap.Config.RGB_565
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type != Sensor.TYPE_ACCELEROMETER) return
+        if (event.sensor.type != Sensor.TYPE_ACCELEROMETER) {
+            return
+        }
 
         /*
          * record the accelerometer data, the event's timestamp as well as
@@ -152,6 +156,7 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
         val yc = mYOrigin
         val xs = mMetersToPixelsX
         val ys = mMetersToPixelsY
+
         for (i in mBalls.indices) {
             /*
              * We transform the canvas so that the coordinate system matches
@@ -168,5 +173,6 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
         invalidate()
     }
 
-    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+    }
 }

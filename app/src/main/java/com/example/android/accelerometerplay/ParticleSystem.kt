@@ -18,9 +18,8 @@ package com.example.android.accelerometerplay
 /*
  * A particle system is just a collection of particles
  */
-class ParticleSystem(private var mBalls: Array<Particle>) {
-
-    private var mLastT: Long = 0
+class ParticleSystem(private val mBalls: Array<Particle>) {
+    private var mLastT: Long = 0L
 
     /*
      * Update the position of each particle in the system using the Verlet integrator.
@@ -90,7 +89,7 @@ class ParticleSystem(private var mBalls: Array<Particle>) {
         }
     }
 
-    fun getPosX(i: Int): Float = mBalls[i].posX
+    fun getPosX(i: Int) = mBalls[i].posX
 
-    fun getPosY(i: Int): Float = mBalls[i].posY
+    fun getPosY(i: Int) = mBalls[i].posY
 }

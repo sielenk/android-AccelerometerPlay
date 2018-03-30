@@ -38,8 +38,7 @@ import android.view.WindowManager
  */
 
 class AccelerometerPlayActivity : Activity() {
-
-    private lateinit var mSimulationView : SimulationView
+    private lateinit var mSimulationView: SimulationView
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +56,7 @@ class AccelerometerPlayActivity : Activity() {
     }
 
     override fun onPause() {
-        super.onPause()
         mSimulationView.stopSimulation()
+        super.onPause()
     }
-
 }

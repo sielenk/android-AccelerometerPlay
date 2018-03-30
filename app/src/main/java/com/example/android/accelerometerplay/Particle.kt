@@ -57,12 +57,10 @@ class Particle(context: Context) : View(context) {
             }
         }
 
-
     private var mVelX: Float = 0f
     private var mVelY: Float = 0f
 
     fun computePhysics(sx: Float, sy: Float, dT: Float) {
-
         val ax = -sx / 5
         val ay = -sy / 5
 
@@ -72,5 +70,4 @@ class Particle(context: Context) : View(context) {
         mVelX += ax * dT
         mVelY += ay * dT
     }
-
 }
