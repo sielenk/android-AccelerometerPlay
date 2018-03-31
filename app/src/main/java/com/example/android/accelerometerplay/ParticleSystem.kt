@@ -72,11 +72,13 @@ class ParticleSystem(private val mBalls: Array<Particle>) {
                         dx += (Math.random().toFloat() - 0.5f) * 0.0001f
                         dy += (Math.random().toFloat() - 0.5f) * 0.0001f
                         dd = dx * dx + dy * dy
+
                         // simulate the spring
                         val d = Math.sqrt(dd.toDouble()).toFloat()
                         val c = 0.5f * (SimulationView.ballDiameter - d) / d
                         val effectX = dx * c
                         val effectY = dy * c
+
                         curr.posX -= effectX
                         curr.posY -= effectY
                         ball.posX += effectX

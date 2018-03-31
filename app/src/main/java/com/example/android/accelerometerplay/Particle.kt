@@ -25,6 +25,8 @@ import android.view.View
  * coefficient.
  */
 class Particle(context: Context) : View(context) {
+    private var mVelX: Float = 0f
+    private var mVelY: Float = 0f
 
     /*
      * Resolving constraints and collisions with the Verlet integrator
@@ -44,6 +46,7 @@ class Particle(context: Context) : View(context) {
                 mVelX = 0f
             }
         }
+
     var posY = Math.random().toFloat()
         set(value) {
             val yMax = SimulationView.yBound//0.053403694f
@@ -56,9 +59,6 @@ class Particle(context: Context) : View(context) {
                 mVelY = 0f
             }
         }
-
-    private var mVelX: Float = 0f
-    private var mVelY: Float = 0f
 
     fun computePhysics(sx: Float, sy: Float, dT: Float) {
         val ax = -sx / 5

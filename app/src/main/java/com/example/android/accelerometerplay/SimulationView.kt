@@ -35,8 +35,8 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
     companion object {
         val NUM_PARTICLES = 5
         val ballDiameter = 0.006f
-        var xBound: Float = 0.0f
-        var yBound: Float = 0.0f
+        var xBound: Float = 0f
+        var yBound: Float = 0f
     }
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
