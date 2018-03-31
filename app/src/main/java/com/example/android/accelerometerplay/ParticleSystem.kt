@@ -15,23 +15,28 @@
  */
 package com.example.android.accelerometerplay
 
+import android.graphics.PointF
+
 /*
  * A particle system is just a collection of particles
  */
-class ParticleSystem(private val mBalls: Array<Particle>) {
-    private var mLastT: Long = 0L
+class ParticleSystem<Data>(count: Int, initializer: (Int) -> Data) {
+    private val mBalls = Array(count) { i -> Particle(initializer(i)) }
+    private var mLastT: Long? = null
 
     /*
      * Update the position of each particle in the system using the Verlet integrator.
      */
     private fun updatePositions(sx: Float, sy: Float, timestamp: Long) {
-        if (mLastT != 0L) {
-            val dT = (timestamp - mLastT).toFloat() / 1000f /* (1.0f / 1000000000.0f)*/
+        val lastT = mLastT
+        mLastT = timestamp
+
+        if (lastT != null) {
+            val dT = (timestamp - lastT).toFloat() / 1000f /* (1.0f / 1000000000.0f)*/
             for (ball in mBalls) {
                 ball.computePhysics(sx, sy, dT)
             }
         }
-        mLastT = timestamp
     }
 
     /*
@@ -91,7 +96,9 @@ class ParticleSystem(private val mBalls: Array<Particle>) {
         }
     }
 
-    fun getPosX(i: Int) = mBalls[i].posX
-
-    fun getPosY(i: Int) = mBalls[i].posY
+    fun updateParticles(transform: (PointF, Data) -> Unit) {
+        for (ball in mBalls) {
+            transform(PointF(ball.posX, ball.posY), ball.data)
+        }
+    }
 }

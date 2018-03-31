@@ -15,16 +15,13 @@
  */
 package com.example.android.accelerometerplay
 
-import android.content.Context
-import android.view.View
-
 
 /*
  * Each of our particle holds its previous and current position, its
  * acceleration. for added realism each particle has its own friction
  * coefficient.
  */
-class Particle(context: Context) : View(context) {
+class Particle<out Data>(val data: Data) {
     private var mVelX: Float = 0f
     private var mVelY: Float = 0f
 

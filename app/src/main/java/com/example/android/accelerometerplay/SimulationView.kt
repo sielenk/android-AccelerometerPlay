@@ -52,9 +52,7 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
     private var mSensorX: Float = 0f
     private var mSensorY: Float = 0f
 
-    private val mParticleSystem: ParticleSystem
-
-    private val mBalls = Array(NUM_PARTICLES, { Particle(context) })
+    private val mParticleSystem: ParticleSystem<View>
 
 
     /*
@@ -92,14 +90,15 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
         xBound = (w / mMetersToPixelsX - ballDiameter) * 0.5f
         yBound = (h / mMetersToPixelsY - ballDiameter) * 0.5f
 
-        for (i in mBalls.indices) {
-            mBalls[i] = Particle(context)
-            mBalls[i].setBackgroundResource(R.drawable.ball)
-            mBalls[i].setLayerType(View.LAYER_TYPE_HARDWARE, null)
-            addView(mBalls[i], ViewGroup.LayoutParams(mDstWidth, mDstHeight))
-        }
+        mParticleSystem = ParticleSystem(NUM_PARTICLES) {
+            val ballView = View(context)
 
-        mParticleSystem = ParticleSystem(mBalls)
+            ballView.setBackgroundResource(R.drawable.ball)
+            ballView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            addView(ballView, ViewGroup.LayoutParams(mDstWidth, mDstHeight))
+
+            ballView
+        }
 
         val opts = BitmapFactory.Options()
 
@@ -157,16 +156,17 @@ class SimulationView(context: Context) : FrameLayout(context), SensorEventListen
         val xs = mMetersToPixelsX
         val ys = mMetersToPixelsY
 
-        for (i in mBalls.indices) {
+        particleSystem.updateParticles { pos, ballView ->
             /*
              * We transform the canvas so that the coordinate system matches
              * the sensors coordinate system with the origin in the center
              * of the screen and the unit is the meter.
              */
-            val x = xc + particleSystem.getPosX(i) * xs
-            val y = yc - particleSystem.getPosY(i) * ys
-            mBalls[i].translationX = x
-            mBalls[i].translationY = y
+            val x = xc + pos.x * xs
+            val y = yc - pos.y * ys
+
+            ballView.translationX = x
+            ballView.translationY = y
         }
 
         // and make sure to redraw asap
