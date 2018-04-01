@@ -21,7 +21,7 @@ package com.example.android.accelerometerplay
  * acceleration. for added realism each particle has its own friction
  * coefficient.
  */
-class Particle<out Data>(val data: Data) {
+class Particle<Data>(val data: Data) {
     private var mVelX: Float = 0f
     private var mVelY: Float = 0f
 
@@ -66,5 +66,33 @@ class Particle<out Data>(val data: Data) {
 
         mVelX += ax * dT
         mVelY += ay * dT
+    }
+
+    fun collisionCheck(other: Particle<Data>): Boolean {
+        var dx = this.posX - other.posX
+        var dy = this.posY - other.posY
+        var dd = dx * dx + dy * dy
+        val collisionFlag = (dd <= SimulationView.ballDiameter * SimulationView.ballDiameter)
+
+        // Check for collisions
+        if (collisionFlag) {
+            // Add a little bit of entropy, after nothing is perfect in the universe.
+            dx += (Math.random().toFloat() - 0.5f) * 0.0001f
+            dy += (Math.random().toFloat() - 0.5f) * 0.0001f
+            dd = dx * dx + dy * dy
+
+            // simulate the spring
+            val d = Math.sqrt(dd.toDouble()).toFloat()
+            val c = 0.5f * (SimulationView.ballDiameter - d) / d
+            val effectX = dx * c
+            val effectY = dy * c
+
+            other.posX -= effectX
+            other.posY -= effectY
+            this.posX += effectX
+            this.posY += effectY
+        }
+
+        return collisionFlag
     }
 }

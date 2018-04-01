@@ -66,30 +66,7 @@ class ParticleSystem<Data>(count: Int, initializer: (Int) -> Data) {
                 val curr = mBalls[i]
                 for (j in i + 1 until count) {
                     val ball = mBalls[j]
-                    var dx = ball.posX - curr.posX
-                    var dy = ball.posY - curr.posY
-                    var dd = dx * dx + dy * dy
-                    // Check for collisions
-                    if (dd <= SimulationView.ballDiameter * SimulationView.ballDiameter) {
-                        /*
-                         * Add a little bit of entropy, after nothing is perfect in the universe.
-                         */
-                        dx += (Math.random().toFloat() - 0.5f) * 0.0001f
-                        dy += (Math.random().toFloat() - 0.5f) * 0.0001f
-                        dd = dx * dx + dy * dy
-
-                        // simulate the spring
-                        val d = Math.sqrt(dd.toDouble()).toFloat()
-                        val c = 0.5f * (SimulationView.ballDiameter - d) / d
-                        val effectX = dx * c
-                        val effectY = dy * c
-
-                        curr.posX -= effectX
-                        curr.posY -= effectY
-                        ball.posX += effectX
-                        ball.posY += effectY
-                        more = true
-                    }
+                    more = more or ball.collisionCheck(curr)
                 }
             }
             k++
