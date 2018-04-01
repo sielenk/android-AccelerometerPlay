@@ -17,9 +17,7 @@ android {
         }
     }
 }
-repositories {
-    mavenCentral()
-}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
