@@ -32,28 +32,32 @@ class Particle<Data>(val data: Data) {
      * satisfied.
      */
     var posX = Math.random().toFloat()
-        set(value) {
+        private set(value) {
             val xMax = SimulationView.xBound//0.031000065f
-            field = value
+
             if (value >= xMax) {
                 field = xMax
                 mVelX = 0f
             } else if (value <= -xMax) {
                 field = -xMax
                 mVelX = 0f
+            } else {
+                field = value
             }
         }
 
     var posY = Math.random().toFloat()
-        set(value) {
+        private set(value) {
             val yMax = SimulationView.yBound//0.053403694f
-            field = value
+
             if (value >= yMax) {
                 field = yMax
                 mVelY = 0f
-            } else if (posY <= -yMax) {
+            } else if (value <= -yMax) {
                 field = -yMax
                 mVelY = 0f
+            } else {
+                field = value
             }
         }
 
