@@ -24,7 +24,12 @@ import android.graphics.PointF
  * coefficient.
  */
 class Particle<Data>(val data: Data) {
-    private var mVel: PointF = PointF(0f, 0f)
+    private val mVel = PointF(0f, 0f)
+    private val mPos = PointF(Math.random().toFloat(), Math.random().toFloat())
+
+    init {
+        adjust()
+    }
 
     /*
      * Resolving constraints and collisions with the Verlet integrator
@@ -32,46 +37,45 @@ class Particle<Data>(val data: Data) {
      * constrained particle in such way that the constraint is
      * satisfied.
      */
-    var pos = PointF(Math.random().toFloat(), Math.random().toFloat())
-        private set(value) {
-            val xMax = SimulationView.xBound//0.031000065f
-            val yMax = SimulationView.yBound//0.053403694f
+    fun getPos() = PointF(mPos.x, mPos.y)
 
-            if (value.x >= xMax) {
-                field.x = xMax
-                mVel.x = 0f
-            } else if (value.x <= -xMax) {
-                field.x = -xMax
-                mVel.x = 0f
-            } else {
-                field.x = value.x
-            }
+    private fun adjust() {
+        val xMax = SimulationView.xBound//0.031000065f
+        val yMax = SimulationView.yBound//0.053403694f
 
-            if (value.y >= yMax) {
-                field.y = yMax
-                mVel.y = 0f
-            } else if (value.y <= -yMax) {
-                field.y = -yMax
-                mVel.y = 0f
-            } else {
-                field.y = value.y
-            }
+        if (mPos.x >= xMax) {
+            mPos.x = xMax
+            mVel.x = 0f
+        } else if (mPos.x <= -xMax) {
+            mPos.x = -xMax
+            mVel.x = 0f
         }
+
+        if (mPos.y >= yMax) {
+            mPos.y = yMax
+            mVel.y = 0f
+        } else if (mPos.y <= -yMax) {
+            mPos.y = -yMax
+            mVel.y = 0f
+        }
+    }
 
     fun computePhysics(sx: Float, sy: Float, dT: Float) {
         val ax = -sx / 5
         val ay = -sy / 5
 
-        pos.offset(
+        mPos.offset(
                 mVel.x * dT + ax * dT * dT / 2,
                 mVel.y * dT + ay * dT * dT / 2)
 
         mVel.offset(ax * dT, ay * dT)
+
+        adjust()
     }
 
     fun collisionCheck(other: Particle<Data>): Boolean {
-        var dx = this.pos.x - other.pos.x
-        var dy = this.pos.y - other.pos.y
+        var dx = this.mPos.x - other.mPos.x
+        var dy = this.mPos.y - other.mPos.y
         var d = PointF.length(dx, dy)
         val collisionFlag = (d <= SimulationView.ballDiameter)
 
@@ -87,8 +91,10 @@ class Particle<Data>(val data: Data) {
             val effectX = dx * c
             val effectY = dy * c
 
-            other.pos.offset(-effectX, -effectY)
-            this.pos.offset(effectX, effectY)
+            other.mPos.offset(-effectX, -effectY)
+            this.mPos.offset(effectX, effectY)
+
+            adjust()
         }
 
         return collisionFlag

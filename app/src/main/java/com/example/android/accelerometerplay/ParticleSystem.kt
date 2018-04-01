@@ -75,7 +75,7 @@ class ParticleSystem<Data>(count: Int, initializer: (Int) -> Data) {
 
     fun updateParticles(transform: (PointF, Data) -> Unit) {
         for (ball in mBalls) {
-            transform(ball.pos, ball.data)
+            transform(ball.getPos(), ball.data)
         }
     }
 }
