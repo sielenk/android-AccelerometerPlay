@@ -15,6 +15,8 @@
  */
 package com.example.android.accelerometerplay
 
+import android.graphics.PointF
+
 
 /*
  * Each of our particle holds its previous and current position, its
@@ -22,8 +24,7 @@ package com.example.android.accelerometerplay
  * coefficient.
  */
 class Particle<Data>(val data: Data) {
-    private var mVelX: Float = 0f
-    private var mVelY: Float = 0f
+    private var mVel: PointF = PointF(0f, 0f)
 
     /*
      * Resolving constraints and collisions with the Verlet integrator
@@ -31,33 +32,29 @@ class Particle<Data>(val data: Data) {
      * constrained particle in such way that the constraint is
      * satisfied.
      */
-    var posX = Math.random().toFloat()
+    var pos = PointF(Math.random().toFloat(), Math.random().toFloat())
         private set(value) {
             val xMax = SimulationView.xBound//0.031000065f
-
-            if (value >= xMax) {
-                field = xMax
-                mVelX = 0f
-            } else if (value <= -xMax) {
-                field = -xMax
-                mVelX = 0f
-            } else {
-                field = value
-            }
-        }
-
-    var posY = Math.random().toFloat()
-        private set(value) {
             val yMax = SimulationView.yBound//0.053403694f
 
-            if (value >= yMax) {
-                field = yMax
-                mVelY = 0f
-            } else if (value <= -yMax) {
-                field = -yMax
-                mVelY = 0f
+            if (value.x >= xMax) {
+                field.x = xMax
+                mVel.x = 0f
+            } else if (value.x <= -xMax) {
+                field.x = -xMax
+                mVel.x = 0f
             } else {
-                field = value
+                field.x = value.x
+            }
+
+            if (value.y >= yMax) {
+                field.y = yMax
+                mVel.y = 0f
+            } else if (value.y <= -yMax) {
+                field.y = -yMax
+                mVel.y = 0f
+            } else {
+                field.y = value.y
             }
         }
 
@@ -65,36 +62,33 @@ class Particle<Data>(val data: Data) {
         val ax = -sx / 5
         val ay = -sy / 5
 
-        posX += mVelX * dT + ax * dT * dT / 2
-        posY += mVelY * dT + ay * dT * dT / 2
+        pos.offset(
+                mVel.x * dT + ax * dT * dT / 2,
+                mVel.y * dT + ay * dT * dT / 2)
 
-        mVelX += ax * dT
-        mVelY += ay * dT
+        mVel.offset(ax * dT, ay * dT)
     }
 
     fun collisionCheck(other: Particle<Data>): Boolean {
-        var dx = this.posX - other.posX
-        var dy = this.posY - other.posY
-        var dd = dx * dx + dy * dy
-        val collisionFlag = (dd <= SimulationView.ballDiameter * SimulationView.ballDiameter)
+        var dx = this.pos.x - other.pos.x
+        var dy = this.pos.y - other.pos.y
+        var d = PointF.length(dx, dy)
+        val collisionFlag = (d <= SimulationView.ballDiameter)
 
         // Check for collisions
         if (collisionFlag) {
             // Add a little bit of entropy, after nothing is perfect in the universe.
             dx += (Math.random().toFloat() - 0.5f) * 0.0001f
             dy += (Math.random().toFloat() - 0.5f) * 0.0001f
-            dd = dx * dx + dy * dy
+            d = PointF.length(dx, dy)
 
             // simulate the spring
-            val d = Math.sqrt(dd.toDouble()).toFloat()
             val c = 0.5f * (SimulationView.ballDiameter - d) / d
             val effectX = dx * c
             val effectY = dy * c
 
-            other.posX -= effectX
-            other.posY -= effectY
-            this.posX += effectX
-            this.posY += effectY
+            other.pos.offset(-effectX, -effectY)
+            this.pos.offset(effectX, effectY)
         }
 
         return collisionFlag
